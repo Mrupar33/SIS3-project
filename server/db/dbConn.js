@@ -1,21 +1,23 @@
-// dbConn.js
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2');
 require('dotenv').config();
 
-const connectDB = async () => {
-    try {
-        const connection = await mysql.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-        });
-        console.log('MySQL connected');
-        return connection;
-    } catch (err) {
-        console.error(err.message);
-        process.exit(1);
-    }
-};
+const pool = mysql.createPool({
+  host: 'localhost', // or 'localhost' based on your setup
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,  // Adjust based on your needs
+  queueLimit: 0
+});
 
-module.exports = connectDB;
+conn.connect((err) => {
+    if(err){
+        console.log("ERROR: " + err.message);
+        return;    
+    }
+    console.log('Connection established');
+  })
+
+
+module.exports = pool.promise();
